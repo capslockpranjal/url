@@ -16,7 +16,7 @@ dotenv.config("./.env")
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173', // your React app
+ origin: process.env.FRONTEND_URL || 'http://localhost:5173', // your React app
     credentials: true // 👈 this allows cookies to be sent
 }));
 
@@ -32,10 +32,10 @@ app.use("/api/create",short_url)
 app.get("/:id",redirectFromShortUrl)
 
 app.use(errorHandler)
-
-app.listen(3000,()=>{
+const PORT = process.env.PORT || 3000;
+app.listen(PORT,()=>{
     connectDB()
-    console.log("Server is running on http://localhost:3000");
+    console.log(`Server is running on http://localhost:${PORT}`);
 })
 
 // GET - Redirection 
