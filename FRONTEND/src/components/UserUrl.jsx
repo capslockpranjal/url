@@ -10,14 +10,33 @@ const UserUrl = () => {
     staleTime: 0, // Consider data stale immediately so it refetches when invalidated
   })
   const [copiedId, setCopiedId] = useState(null)
-  const handleCopy = (url, id) => {
-    navigator.clipboard.writeText(url)
-    setCopiedId(id)
-    
-    // Reset the copied state after 2 seconds
-    setTimeout(() => {
-      setCopiedId(null)
-    }, 2000)
+  const handleCopy = async (url, id) => {
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedId(id)
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedId(null)
+      }, 2000)
+    } catch (err) {
+      console.error('Failed to copy text: ', err)
+      // Fallback for older browsers or when clipboard API fails
+      const textArea = document.createElement('textarea')
+      textArea.value = url
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        setCopiedId(id)
+        setTimeout(() => {
+          setCopiedId(null)
+        }, 2000)
+      } catch (fallbackErr) {
+        console.error('Fallback copy failed: ', fallbackErr)
+      }
+      document.body.removeChild(textArea)
+    }
   }
 
   if (isLoading) {

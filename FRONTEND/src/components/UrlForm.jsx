@@ -24,14 +24,33 @@ const UrlForm = () => {
     }
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shortUrl);
-    setCopied(true);
-    
-    // Reset the copied state after 2 seconds
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      setCopied(true);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      // Fallback for older browsers or when clipboard API fails
+      const textArea = document.createElement('textarea');
+      textArea.value = shortUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
+      } catch (fallbackErr) {
+        console.error('Fallback copy failed: ', fallbackErr);
+      }
+      document.body.removeChild(textArea);
+    }
   }
 
   return (
