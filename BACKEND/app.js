@@ -16,7 +16,7 @@ dotenv.config("./.env")
 const app = express();
 
 app.use(cors({
- origin: process.env.FRONTEND_URL || 'http://localhost:5173', // your React app
+ origin: process.env.FRONTEND_URL || ['http://localhost:5173', 'https://your-frontend-domain.vercel.app'], // your React app
     credentials: true // 👈 this allows cookies to be sent
 }));
 
